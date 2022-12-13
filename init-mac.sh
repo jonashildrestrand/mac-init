@@ -8,43 +8,41 @@ else
   echo "Brew is already installed. Skipping installation."
 fi
 
-# Install packages with brew
+echo "Updating brew, this may take a while."
+brew update > /dev/null
 
-# curl
-if ! brew install curl; then
-  echo "Failed to install Spotify. Skipping."
-fi
+# Install applications with Brew
+apps=(
+  azure-cli
+  curl 
+  spotify 
+  spectacle 
+  jenv 
+  npm 
+  yarn 
+  node
+)
 
-# Spotify
-if ! brew install spotify; then
-  echo "Failed to install Spotify. Skipping."
-fi
+for app in "${apps[@]}"; do
+  if ! brew list | grep -q "$app"; then
+    if ! brew install "$app"; then
+      printf "\e[31mFailed to install $app. Skipping.\e[0m\n"
+    else
+      printf "\e[32mSuccessfully installed $app.\e[0m\n"
+    fi
+  else
+    printf "\e[33m$app is already installed. Skipping.\e[0m\n"
+  fi
+done
 
-# Spectacle
-if ! brew install spectacle; then
-  echo "Failed to install Spectacle. Skipping."
-fi
-
+# Application Configuration
 # jEnv
-if ! brew install jenv; then
-  echo "Failed to install jEnv. Skipping."
-fi
+echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.bash_profile
+echo 'eval "$(jenv init -)"' >> ~/.bash_profile
+echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(jenv init -)"' >> ~/.zshrc
 
-# npm
-if ! brew install npm; then
-  echo "Failed to install npm. Skipping."
-fi
-
-# yarn
-if ! brew install yarn; then
-  echo "Failed to install yarn. Skipping."
-fi
-
-# node
-if ! brew install node; then
-  echo "Failed to install node. Skipping."
-fi
-
+# Install DMG applications
 # Download IntelliJ DMG file
 curl -L -o intellij.dmg https://download.jetbrains.com/idea/ideaIC-2021.2.3.dmg
 
